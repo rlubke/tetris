@@ -1,3 +1,5 @@
+const Main := preload("res://Main/Main.gd")
+
 static func get_all() -> Array[Tetromino]:
 	return [TShape.new(), IShape.new(), OShape.new(), LShape.new(), JShape.new(),SShape.new(),ZShape.new()]
 
@@ -20,18 +22,21 @@ static func get_all() -> Array[Tetromino]:
 		var ret: Array = _get_rotations()[index]
 		return ret
 
-	func _rotate(tile_map: TileMapLayer, index: int) -> void:
-		_clear(tile_map)
-		current_layout.assign(_get_rotation(index))
-		render(tile_map)
+	func _rotate(index: int, tile_map: TileMapLayer) -> void:
+		if _can_move(Vector2i.ZERO, _get_rotation(rotation_index), tile_map):
+			# clear before rotate to ensure the correct grid-cells
+			# are reset.
+			_clear(tile_map)
+			current_layout.assign(_get_rotation(index))
+			render(tile_map)
 
 	func rotate_cw(tile_map: TileMapLayer):
 		rotation_index = (rotation_index + 1) % 4
-		_rotate(tile_map, rotation_index)
+		_rotate(rotation_index, tile_map)
 
 	func rotate_ccw(tile_map: TileMapLayer):
 		rotation_index = (rotation_index + 3) % 4
-		_rotate(tile_map, rotation_index)
+		_rotate(rotation_index, tile_map)
 
 	func render(tile_map: TileMapLayer) -> Tetromino:
 		for block in current_layout:
@@ -43,16 +48,29 @@ static func get_all() -> Array[Tetromino]:
 			tile_map.erase_cell(position + block)
 
 	func move(direction: Vector2i, tile_map: TileMapLayer) -> Tetromino:
-		_clear(tile_map)
-		position += direction
-		render(tile_map)
+		if direction != Vector2i.UP && _can_move(direction, current_layout, tile_map):
+			_clear(tile_map)
+			position += direction
+			render(tile_map)
+
 		return self
 		
 	func drop() -> void:
 		pass
 		
-	func _can_move(_direction: Vector2i) -> void:
-		pass
+	func _can_move(direction: Vector2i, layout: Array, tile_map: TileMapLayer) -> bool:
+		
+		var new_position = position + direction
+
+		for block in layout:
+			var new_block_position = new_position + block
+
+			if new_block_position.x < Main.GAME_X_MIN || \
+			   new_block_position.x > Main.GAME_X_MAX || \
+			   new_block_position.y > Main.GAME_Y_MAX:
+				return false
+
+		return true
 		
 	func lock() -> void:
 		pass
@@ -178,9 +196,9 @@ class ZShape extends Tetromino:
 	static var _id = 6
 
 	var rotations: Array[Array] = [
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2)], # NORTH
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)], # NORTH
 		[Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 2)], # EAST
-		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(1, 2)], # SOUTH
+		[Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1), Vector2i(2, 1)], # SOUTH
 		[Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 2)], # WEST
 	]
 

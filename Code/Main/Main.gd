@@ -5,6 +5,15 @@ class_name Main
 
 const Tetrominos = preload("res://Tetronimo/Tetronimo.gd")
 
+const GRID_X_MAX := 22
+const GRID_Y_MAX := 34
+
+const GAME_X_MIN := 1
+const GAME_X_MAX := 20
+
+const GAME_Y_MIN := 0
+const GAME_Y_MAX := 32
+
 var fall_rate: int = 1
 var last_tick: float
 var down_count = 10
