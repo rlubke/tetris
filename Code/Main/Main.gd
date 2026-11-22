@@ -125,7 +125,16 @@ func _handle_input() -> void:
 		current_tetromino.drop()
 
 
+# ----- event handlers ---------------------------------------------------------
+
+func _on_blocked():
+	current_tetromino = Tetrominos.next();
+
+
 # ----- system function overrides ----------------------------------------------
+
+func _ready() -> void:
+	Signals.blocked.connect(_on_blocked)
 
 # called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
