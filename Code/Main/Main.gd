@@ -4,8 +4,8 @@ class_name Main
 # ----- constants --------------------------------------------------------------
 
 # absolute grid boundaries
-const GRID_X_MAX := 22
-const GRID_Y_MAX := 34
+const GRID_X_MAX := 21
+const GRID_Y_MAX := 33
 
 # inner X boundaries
 const GAME_X_MIN := 1
@@ -78,7 +78,6 @@ func _check_delay() -> bool:
 	else:
 		repeat_delay = 0
 		return true
-		current_tetromino.move(Vector2i.DOWN, tile_map_layer)
 
 # user input handling logic.
 func _handle_input() -> void:
@@ -117,24 +116,24 @@ func _handle_input() -> void:
 	## ---- CCW -----------------------------------------------------------------
 	
 	elif Input.is_action_just_pressed(CCW):
-		current_tetromino.rotate_cw(tile_map_layer)
+		current_tetromino.rotate_ccw(tile_map_layer)
 
 	## ----- DROP --------------------------------------------------------------
 
 	elif Input.is_action_just_pressed(DROP):
-		current_tetromino.drop()
+		current_tetromino.drop(tile_map_layer)
 
 
 # ----- event handlers ---------------------------------------------------------
 
-func _on_blocked():
+func _on_locked():
 	current_tetromino = Tetrominos.next();
 
 
 # ----- system function overrides ----------------------------------------------
 
 func _ready() -> void:
-	Signals.blocked.connect(_on_blocked)
+	Signals.locked.connect(_on_locked)
 
 # called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta: float) -> void:
