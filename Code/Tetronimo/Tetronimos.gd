@@ -162,15 +162,15 @@ class Block:
 			var block: Block = node as Block
 			var new_block_position = new_position + block.position
 
-			# check game min/max X boundary conditions
-			if new_block_position.x < Main.GAME_X_MIN || \
-			   new_block_position.x > Main.GAME_X_MAX:
-				return false
-				
-			# check game max Y boundary conditions
-			if new_block_position.y > Main.GAME_Y_MAX:
-				_lock(tile_map)
-				return false
+			## check game min/max X boundary conditions
+			#if new_block_position.x < Main.GAME_X_MIN || \
+			   #new_block_position.x > Main.GAME_X_MAX:
+				#return false
+				#
+			## check game max Y boundary conditions
+			#if new_block_position.y > Main.GAME_Y_MAX:
+				#_lock(tile_map)
+				#return false
 				
 			if direction == Vector2i.RIGHT:
 				if block.check(Block.CHECK_RIGHT):
